@@ -42,6 +42,7 @@ Account IOLoginData::loadAccount(uint32_t accno)
 	account.accountType = static_cast<AccountType_t>(result->getNumber<int32_t>("type"));
 	account.premiumDays = result->getNumber<uint16_t>("premdays");
 	account.lastDay = result->getNumber<time_t>("lastday");
+	account.coinBalance = result->getNumber<uint32_t>("premium_points");
 	return account;
 }
 
@@ -186,7 +187,7 @@ bool IOLoginData::preloadPlayer(Player* player, const std::string& name)
 	Database* db = Database::getInstance();
 
 	std::ostringstream query;
-	query << "SELECT `id`, `account_id`, `group_id`, `deletion`, (SELECT `type` FROM `accounts` WHERE `accounts`.`id` = `account_id`) AS `account_type`";
+	query << "SELECT `id`, `account_id`, `group_id`, `deletion`, (SELECT `type` FROM `accounts` WHERE `accounts`.`id` = `account_id`) AS `account_type`, (SELECT `premium_points` FROM `accounts` WHERE `accounts`.`id` = `account_id`) AS `coinbalance`";
 	if (!g_config.getBoolean(ConfigManager::FREE_PREMIUM)) {
 		query << ", (SELECT `premdays` FROM `accounts` WHERE `accounts`.`id` = `account_id`) AS `premium_days`";
 	}
@@ -209,6 +210,7 @@ bool IOLoginData::preloadPlayer(Player* player, const std::string& name)
 	player->setGroup(group);
 	player->accountNumber = result->getNumber<uint32_t>("account_id");
 	player->accountType = static_cast<AccountType_t>(result->getNumber<uint16_t>("account_type"));
+	player->coinBalance = result->getNumber<uint32_t>("coinbalance");
 	if (!g_config.getBoolean(ConfigManager::FREE_PREMIUM)) {
 		player->premiumDays = result->getNumber<uint16_t>("premium_days");
 	} else {
@@ -248,7 +250,7 @@ bool IOLoginData::loadPlayer(Player* player, DBResult_ptr result)
 	player->accountNumber = accno;
 
 	player->accountType = acc.accountType;
-
+	player->coinBalance = acc.coinBalance;
 	if (g_config.getBoolean(ConfigManager::FREE_PREMIUM)) {
 		player->premiumDays = std::numeric_limits<uint16_t>::max();
 	} else {

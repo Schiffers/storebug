@@ -1,6 +1,6 @@
 /**
  * The Forgotten Server - a free and open-source MMORPG server emulator
- * Copyright (C) 2016  Mark Samman <mark.samman@gmail.com>
+ * Copyright (C) 2015  Mark Samman <mark.samman@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef FS_ACCOUNT_H_34817537BA2B4CB7B71AA562AFBB118F
-#define FS_ACCOUNT_H_34817537BA2B4CB7B71AA562AFBB118F
+#include "otpch.h"
 
-#include "enums.h"
+#include "account.h"
+#include "database.h"
+#include "databasetasks.h"
 
-struct Account {
-	std::vector<std::string> characters;
-	std::string name;
-	std::string key;
-	time_t lastDay;
-	uint32_t id;
-	uint16_t premiumDays;
-	AccountType_t accountType;
+uint32_t IOAccount::getCoinBalance(uint32_t accountId) {
+	Database* db = Database::getInstance();
 
-	Account() : lastDay(0), id(0), premiumDays(0), accountType(ACCOUNT_TYPE_NORMAL) {}
-};
+	std::ostringstream query;
+	query << "SELECT `premium_points` FROM `accounts` WHERE `id` = " << accountId;
 
-class IOAccount {
-	public:
-		static uint32_t getCoinBalance(uint32_t accountId);
-		static void addCoins(uint32_t accountId, int32_t coins);
-};
+	DBResult_ptr result = db->storeQuery(query.str());
+	if (!result) {
+		return false;
+	}
 
-#endif
+	return result->getNumber<uint32_t>("premium_points");
+}
+
+void IOAccount::addCoins(uint32_t accountId, int32_t coins) {
+	std::ostringstream query;
+	query << "UPDATE `accounts` SET `premium_points` = `premium_points` + " << coins << " WHERE `id` = " << accountId;
+
+	g_databaseTasks.addTask(query.str());
+}

@@ -35,6 +35,7 @@
 #include "monster.h"
 #include "scheduler.h"
 #include "events.h"
+#include "store.h"
 
 #include "pugicast.h"
 
@@ -51,6 +52,7 @@ extern GlobalEvents* g_globalEvents;
 extern Events* g_events;
 extern Chat* g_chat;
 extern LuaEnvironment g_luaEnvironment;
+extern Store* g_store;
 
 s_defcommands Commands::defined_commands[] = {
 	// TODO: move all commands to talkactions
@@ -252,6 +254,9 @@ void Commands::reloadInfo(Player& player, const std::string& param)
 	} else if (tmpParam == "global") {
 		g_luaEnvironment.loadFile("data/global.lua");
 		player.sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Reloaded global.lua.");
+	} else if (tmpParam == "store") {
+		g_store->reload();
+		player.sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Reloaded store.");
 	} else {
 		player.sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "Reload type not found.");
 	}
