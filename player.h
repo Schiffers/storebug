@@ -1275,6 +1275,7 @@ class Player final : public Creature, public Cylinder
 		int32_t offlineTrainingSkill;
 		int32_t offlineTrainingTime;
 		int32_t idleTime;
+		uint32_t coinBalance;
 
 		uint16_t lastStatsTrainingTime;
 		uint16_t staminaMinutes;
