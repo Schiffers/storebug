@@ -351,6 +351,8 @@ class ProtocolGame final : public Protocol
 		uint16_t version;
 
 		uint8_t challengeRandom;
+		
+		uint8_t storeHistoryEntriesPerPage;
 
 		bool debugAssertSent;
 		bool acceptPackets;
