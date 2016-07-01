@@ -36,6 +36,7 @@
 #include "groups.h"
 #include "town.h"
 #include "mounts.h"
+#include "store.h"
 
 class House;
 class NetworkMessage;
@@ -875,6 +876,10 @@ class Player final : public Creature, public Cylinder
 		void onSendContainer(const Container* container);
 		void autoCloseContainers(const Container* container);
 
+		//store
+		void sendStoreError(StoreError_t errorType, const std::string& message);
+		void sendStorePurchaseCompleted(const std::string& message);
+		
 		//inventory
 		void onUpdateInventoryItem(Item* oldItem, Item* newItem);
 		void onRemoveInventoryItem(Item* item);
