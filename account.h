@@ -34,4 +34,10 @@ struct Account {
 	Account() : lastDay(0), id(0), premiumDays(0), accountType(ACCOUNT_TYPE_NORMAL) {}
 };
 
+class IOAccount {
+	public:
+		static uint32_t getCoinBalance(uint32_t accountId);
+		static void addCoins(uint32_t accountId, int32_t coins);
+};
+
 #endif
